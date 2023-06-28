@@ -1,0 +1,49 @@
+#register {
+	margin-top: 10vw;
+}
+
+header {
+	position: sticky;
+	top: 0;
+}
+#submit {
+	display: flex;
+}
+#submit > textarea {
+	background-color: #fff;
+	border: 1px solid var(--nc-bg-3);
+	width: 100%;
+}
+
+ul {
+	padding-left: 0;
+}
+.message {
+	list-style-type: none;
+	background-color: var(--nc-bg-2);
+	margin: 0px;
+	padding: 1px 10px;
+	border: 1px solid var(--nc-bg-3);
+	border-radius: 10px;
+	margin-bottom: 5px;
+	font-size: large;
+}
+.message__body {
+	padding: 10px 5px 10px 5px;
+	margin-bottom: 0;
+	white-space: pre-wrap;
+	color: #444;
+}
+.auth_info {
+	color: #999;
+	padding: 3px;
+}
+
+footer {
+	position: sticky;
+	bottom: 0;
+	width: 100%;
+	padding: 30px;
+	background-color: #fff;
+	border-top: 1px solid var(--nc-bg-3);
+}

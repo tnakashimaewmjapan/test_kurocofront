@@ -1,11 +1,61 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Document</title>
+	<link rel="stylesheet" href="https://newcss.net/new.min.css">
+	<link rel="stylesheet" href="style.css">
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+	<title>test kurocofront</title>
 </head>
+
 <body>
-	<h2>test login page</h2>
+	<div id="app">
+		<header>
+			<div v-if="isLogin">
+				<div id="submit">
+					<textarea v-model="login.message" cols="30" rows="3" placeholder="いま何してる？"></textarea>
+					<button @click="submit()">投稿する</button>
+				</div>
+			</div>
+		</header>
+
+		<section v-if="!isLogin">
+			<div>
+				<h2>ログイン</h2>
+				<p>メールアドレス：<input type="text" v-model="login.mail" placeholder="test@example.com"></p>
+				<p>パスワード：<input type="password" v-model="login.password" placeholder="password"></p>
+				<button @click="do_login()">ログインする</button>
+			</div>
+			<div id="register">
+				<h2>新規登録</h2>
+				<p>ユーザー名：<input type="text" v-model="register.firstname" placeholder="姓"><input type="text" v-model="register.lastname" placeholder="名"></p>
+				<p>メールアドレス：<input type="text" v-model="register.mail" placeholder="test@example.com"></p>
+				<p>パスワード：<input type="password" v-model="register.password" placeholder="password"></p>
+				<button @click="register_member()">登録する</button>
+			</div>
+		</section>
+
+		<section v-if="isLogin">
+			<div>
+				<ul>
+					<li class="message" v-for="item in lists.list">
+						<p class="message__body">{{item.subject}}</p>
+						<small class="auth_info">👤{{item.author_name}} 🕘{{item.ymd}} {{item.post_time}}</small>
+					</li>
+				</ul>
+			</div>
+		</section>
+		
+		<footer>
+			<span v-if="isLogin">
+				👤{{login.firstname}}{{login.lastname}}
+				<a href="" @click="do_logout()">ログアウト</a>
+			</span>
+		</footer>
+	</div>
+	<script src="script.js"></script>
 </body>
 </html>

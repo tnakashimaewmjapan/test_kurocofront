@@ -6,24 +6,33 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="https://newcss.net/new.min.css">
 	<link rel="stylesheet" href="style.css">
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic&display=swap" rel="stylesheet">
 	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 	<title>test kurocofront</title>
 </head>
 
 <body>
-	<div id="app">
+	<div id="app" v-cloak>
+		<!-- ヘッダー　メッセージの投稿部分 -->
 		<header>
 			<div v-if="isLogin">
 				<div id="submit">
-					<textarea v-model="login.message" cols="30" rows="3" placeholder="いま何してる？"></textarea>
-					<button @click="submit()">投稿する</button>
+					<textarea v-model="submit_content.message" placeholder="いま何してる？"></textarea>
+					<!-- 画像の追加 -->
+					<label class="uploader pointer" for="image" v-if="!submit_content.img_thumb_url">📷</label>
+					<label class="uploader pointer" for="image" v-if="submit_content.img_thumb_url"><img :src='submit_content.img_thumb_url'></label>
+					<input type="file" name="image" id="image" @change="select_image" style="display: none;">
+					<button style="height: 100px;" @click="submit()">📝投稿する</button>
 				</div>
 			</div>
 		</header>
 
+		<!-- ログイン画面 -->
 		<section v-if="!isLogin">
-			<div>
+			<div id="login">
 				<h2>ログイン</h2>
 				<p>メールアドレス：<input type="text" v-model="login.mail" placeholder="test@example.com"></p>
 				<p>パスワード：<input type="password" v-model="login.password" placeholder="password"></p>
@@ -31,30 +40,90 @@
 			</div>
 			<div id="register">
 				<h2>新規登録</h2>
-				<p>ユーザー名：<input type="text" v-model="register.firstname" placeholder="姓"><input type="text" v-model="register.lastname" placeholder="名"></p>
+				<p>ユーザー名：
+					<input type="text" v-model="register.firstname" placeholder="姓">
+					<input type="text" v-model="register.lastname" placeholder="名">
+				</p>
 				<p>メールアドレス：<input type="text" v-model="register.mail" placeholder="test@example.com"></p>
 				<p>パスワード：<input type="password" v-model="register.password" placeholder="password"></p>
 				<button @click="register_member()">登録する</button>
 			</div>
 		</section>
 
+		<!-- メッセージ一覧 -->
 		<section v-if="isLogin">
 			<div>
 				<ul>
 					<li class="message" v-for="item in lists.list">
 						<p class="message__body">{{item.subject}}</p>
-						<small class="auth_info">👤{{item.author_name}} 🕘{{item.ymd}} {{item.post_time}}</small>
+						<p v-if="item.image.url"><img :src='item.image.url' alt='' loading='lazy'></p>
+						<small class="message__auth_info">
+							<span>
+								<span class="pointer mr-20" @click="get_lists(item.member_id)">👤{{item.author_name}}</span>
+								🕘{{item.ymd}} {{item.post_time}}
+							</span>
+							<!-- メッセージ削除ボタン -->
+							<span class="delete_button pointer" v-if="item.member_id==login.member_id" @click="delete_message(item.topics_id)">
+								✖
+								<span class="tooltip">メッセージを削除</span>
+							</span>
+						</small>
 					</li>
 				</ul>
 			</div>
 		</section>
 		
+		<!-- フッター　ログイン情報、お問合せフォームボタン -->
 		<footer>
 			<span v-if="isLogin">
-				👤{{login.firstname}}{{login.lastname}}
-				<a href="" @click="do_logout()">ログアウト</a>
+				<span class="pointer mr-20" @click="get_lists()">🏠Home</span>
+				<span class="pointer mr-20" @click="get_lists(login.member_id)">👤{{login.firstname}}{{login.lastname}}</span>  
+				<span class="pointer mr-20" @click="do_logout()">💨ログアウト</span>  
 			</span>
+			<button id="contact" @click="modal_open()">📩お問合せ</button>
 		</footer>
+
+		<!-- お問合せフォームダイアログ -->
+		<dialog id="dialog">
+			<div class="dialog__body" v-if="contact_content.status==='input'">
+				<h3>お問合せ－入力</h3>
+				<textarea name="contact_form" v-model="contact_content.form"></textarea>
+				<input name="contact_mail" type="text" v-model="contact_content.mail" placeholder="test@example.com">
+				<div>
+					<button class="button_close" @click="modal_close()">閉じる</button>
+					<button @click="confirm()">確認画面へ</button>
+				</div>
+			</div>
+			<div class="dialog__body" v-if="contact_content.status==='confirm'">
+				<h3>お問合せ－確認</h3>
+				<div v-if="contact_content.res_e">
+					<p class="warning">※入力内容に誤りがあります</p>
+					<p class="warning" v-for="err in contact_content.res_e">{{err.message}}</p>
+				</div>
+				<p class="contact_form">{{contact_content.form}}</ｐ>
+				<p class="contact_mail">{{contact_content.mail}}</p>
+				<p>上記の内容でよろしければ送信ボタンを押してください。</p>
+				<div>
+					<button class="button_close" @click="contact_content.status = 'input'">修正する</button>
+					<button @click="contact()">送信する</button>
+				</div>
+			</div>
+			<div class="dialog__body" v-if="contact_content.status==='thanks'">
+				<h3>お問合せ－完了</h3>
+				<p>{{contact_content.res.data.messages[0]}}</p>
+				<div>
+					<button class="button_close" @click="modal_close()">閉じる</button>
+				</div>
+			</div>
+		</dialog>
+
+		<!-- エラーメッセージ -->
+		<div id="toast">
+			<div v-for="(err,index) in logs" @click="logs.splice(index, 1)">
+				<p>{{err.message}}</p>
+				<p>❌</p>
+			</div>
+		</div>
 	</div>
 	<script src="script.js"></script>
 </body>

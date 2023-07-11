@@ -1,3 +1,15 @@
+* {
+	font-family: 'Zen Maru Gothic', sans-serif;
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+[v-cloak] {
+	display: none;
+}
+
 #register {
 	margin-top: 10vw;
 }
@@ -5,45 +17,188 @@
 header {
 	position: sticky;
 	top: 0;
+	z-index: 100;
 }
+
 #submit {
 	display: flex;
+	align-items: center;
+	height: 100px;
 }
-#submit > textarea {
+
+#submit>textarea {
 	background-color: #fff;
 	border: 1px solid var(--nc-bg-3);
 	width: 100%;
+	height: 100%;
+	margin-top: 8px;
+}
+
+.uploader {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 100px;
+	max-width: 100px;
+	height: 100%;
+	margin: 10px;
+	border: 1px solid var(--nc-bg-3);
+	background-color: #fff;
 }
 
 ul {
 	padding-left: 0;
 }
+
 .message {
 	list-style-type: none;
 	background-color: var(--nc-bg-2);
 	margin: 0px;
-	padding: 1px 10px;
+	padding: 10px 30px;
 	border: 1px solid var(--nc-bg-3);
 	border-radius: 10px;
-	margin-bottom: 5px;
+	margin-bottom: 10px;
 	font-size: large;
 }
+
+.message:last-child {
+	margin-bottom: 100px;
+}
+
 .message__body {
 	padding: 10px 5px 10px 5px;
 	margin-bottom: 0;
 	white-space: pre-wrap;
 	color: #444;
 }
-.auth_info {
+
+.message__auth_info {
 	color: #999;
 	padding: 3px;
+	display: flex;
+	justify-content: space-between;
+}
+
+.delete_button {
+	position: relative;
+}
+
+.tooltip {
+	z-index: 100;
+	opacity: 0;
+	visibility: hidden;
+	position: absolute;
+	left: 50%;
+	transform: translateX(-50%);
+	bottom: -30px;
+	display: inline-block;
+	padding: 5px 10px;
+	white-space: nowrap;
+	font-size: 0.8rem;
+	line-height: 1.3;
+	background: #333;
+	color: #fff;
+	border-radius: 3px;
+	transition: 0.3s ease-in;
+}
+
+.delete_button:hover .tooltip {
+	opacity: 1;
+	visibility: visible;
 }
 
 footer {
-	position: sticky;
+	position: fixed;
 	bottom: 0;
+	left: 0;
 	width: 100%;
 	padding: 30px;
-	background-color: #fff;
+	text-align: center;
+	background-color: var(--nc-bg-1);
 	border-top: 1px solid var(--nc-bg-3);
+}
+
+footer #contact {
+	position: fixed;
+	bottom: 3%;
+	right: 6%;
+}
+
+#dialog:modal {
+	width: 50vw;
+	height: 50vh;
+	position: fixed;
+	top: 25vh;
+	left: 25vw;
+	border-radius: 10px;
+}
+
+.dialog__body {
+	display: grid;
+	place-items: center;
+	background-color: var(--nc-bg-1);
+	align-content: space-evenly;
+	white-space: pre-wrap;
+}
+
+#dialog::backdrop {
+	backdrop-filter: blur(2px);
+	background: hsl(0 0% 10% / 0.5);
+}
+
+#dialog textarea[name="contact_form"],
+.contact_form {
+	width: 80%;
+	height: 160px;
+	border: 1px solid var(--nc-bg-3);
+}
+
+dialog input[name="contact_mail"],
+.contact_mail {
+	width: 80%;
+	border: 1px solid var(--nc-bg-3);
+}
+
+#dialog button {
+	width: 150px;
+	height: 40px;
+	margin: 10px;
+}
+
+.button_close {
+	background-color: #aaa;
+}
+
+.warning {
+	color: red;
+}
+
+#toast {
+	position: fixed;
+	bottom: 50px;
+	right: 0;
+	color: red;
+}
+
+#toast div {
+	width: 200px;
+	min-height: 60px;
+	padding: 10px;
+	margin: 20px;
+	border: 1px solid var(--nc-bg-3);
+	border-left: 5px solid red;
+	background-color: #fff;
+	border-radius: 5px;
+	display: flex;
+	align-items: center;
+	flex-wrap: nowrap;
+	justify-content: space-between;
+}
+
+.pointer {
+	cursor: pointer;
+}
+
+.mr-20 {
+	margin-right: 20px;
 }
